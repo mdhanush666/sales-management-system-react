@@ -10,9 +10,7 @@ import { setLoggedUserID } from '@/store/slice/userSlice';
 import GeoLocationFinder from '@/components/common/GeoLocationFinder';
 
 const LoginPage = () => {
-
     const dispatch = useDispatch();
-
     const [userName, setUserName] = useState("");
     const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -25,25 +23,19 @@ const LoginPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         let userGeoLocation = null;
-
         try {
             setIsLoading(true);
             userGeoLocation = await GeoLocationFinder();
 
             if (!userGeoLocation.error) {
-
                 const response = await ApiMaster.post("/auth/login", { userName, password, geoLocation: userGeoLocation });
 
                 // Inside your login form handler:
                 if (response && response.success) {
                     setIsNavigating(true);
                     CustomToast.SuccessToast(response.message);
-
                     // Pass an object containing both parameters now
-                    dispatch(setLoggedUserID({
-                        userID: response.data.userID,
-                        role: response.data.role
-                    }));
+                    dispatch(setLoggedUserID({ userID: response.data.userID, role: response.data.role }));
 
                     if (response.data.role === 'admin') {
                         navigate("/admin/home");
@@ -56,15 +48,16 @@ const LoginPage = () => {
                     CustomToast.ErrorToast(response.message);
                 }
             }
+
         } catch (error) {
             console.log(error.message);
         } finally {
             setIsLoading(false);
         }
     }
+
     return (
         <div className='fixed inset-0 overscroll-none h-screen w-full overflow-hidden bg-black'>
-
             {/* Liquid Ether Background */}
             <div className="absolute inset-0 z-0">
                 <LiquidEther
@@ -88,12 +81,18 @@ const LoginPage = () => {
 
             {/* Login Form */}
             <div className="relative flex z-10 items-center justify-center h-full text-white">
-                <form
-                    action=""
-                    onSubmit={handleSubmit}
-                    className='border border-white/10 rounded-xl backdrop-blur-md shadow-xl p-8 w-full max-w-sm space-y-6'
-                >
-                    <h1 className='text-4xl text-center font-semibold'>Login</h1>
+                <form action="" onSubmit={handleSubmit} className='border border-white/10 rounded-xl backdrop-blur-md shadow-xl p-8 w-full max-w-sm space-y-6' >
+                    <div className="space-y-4">
+                        <h1 className='text-4xl text-center font-semibold'>Login</h1>
+
+                        {/* Demo Credentials Box */}
+                        <div className="bg-white/5 border border-white/10 rounded-lg p-3 text-xs space-y-1 font-mono text-left">
+                            <p className="text-purple-300 font-semibold mb-1 not-mono text-center">Demo Accounts</p>
+                            <p><span className="text-white/50">Admin:</span> testadmin / 123456</p>
+                            <p><span className="text-white/50">Rep:</span> testrep / 123456</p>
+                        </div>
+                    </div>
+
                     <div>
                         <label htmlFor="username" className='block text-sm font-medium'>Username</label>
                         <input
@@ -107,6 +106,7 @@ const LoginPage = () => {
                             onChange={e => setUserName(e.target.value)}
                         />
                     </div>
+
                     <div>
                         <label htmlFor="password" className='block text-sm font-medium'>Password</label>
                         <input
@@ -119,6 +119,7 @@ const LoginPage = () => {
                             onChange={e => setPassword(e.target.value)}
                         />
                     </div>
+
                     <StarBorder
                         as="button"
                         className="custom-class w-full hover:scale-105 transition-transform duration-300 ease-in-out cursor-pointer"
@@ -130,9 +131,8 @@ const LoginPage = () => {
                     </StarBorder>
                 </form>
             </div>
-
         </div>
     )
 }
 
-export default LoginPage
+export default LoginPage;
